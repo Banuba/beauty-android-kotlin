@@ -1,4 +1,6 @@
-Quick start examples for [Banuba SDK on Android](https://docs.banuba.com/docs/android/android_overview).
+Quick start Android example for [Banuba SDK Effect API](https://docs.banuba.com/face-ar-sdk/effect_api/getting_started).
+Example shows how to work with [Face Beauty API](https://docs.banuba.com/face-ar-sdk/effect_api/face_beauty) and [Makeup API](https://docs.banuba.com/face-ar-sdk/effect_api/makeup).
+In both cases the [Makeup effect](https://docs.banuba.com/face-ar-sdk/generated/effects/Makeup.zip) is used.
 
 # Getting Started
 
