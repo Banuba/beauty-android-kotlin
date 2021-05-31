@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.banuba.sdk.example.beautification.camera.CameraViewModel.ApiType" />
+        <variable
+            name="viewModel"
+            type="com.banuba.sdk.example.beautification.camera.CameraViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <SurfaceView
+            android:id="@+id/surfaceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="-16dp" />
+
+        <LinearLayout
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:background="#4D000000"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/cameraFps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
+                android:textSize="12sp"
+                tools:text="@{viewModel.cameraValue}" />
+
+            <TextView
+                android:id="@+id/frxFps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
+                android:textSize="12sp"
+                tools:text="@{viewModel.recognizerValue}" />
+
+            <TextView
+                android:id="@+id/drawFps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
+                android:textSize="12sp"
+                tools:text="@{viewModel.rendererValue}" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/surfaceView">
+
+            <ImageView
+                android:id="@+id/camera"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:contentDescription="@string/rotate"
+                android:focusable="true"
+                android:onClick="@{() -> viewModel.switchCamera()}"
+                app:srcCompat="@drawable/camera"
+                tools:srcCompat="@drawable/camera" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/rotate" />
+
+            <ImageView
+                android:id="@+id/clear"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:contentDescription="@string/clear"
+                android:focusable="true"
+                android:onClick="@{() -> viewModel.resetFeatures()}"
+                app:srcCompat="@drawable/clear"
+                tools:srcCompat="@drawable/clear" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/clear" />
+
+            <ImageView
+                android:id="@+id/set_texture"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:contentDescription="@string/set_texture"
+                android:focusable="true"
+                android:onClick="@{() -> viewModel.selectTexture()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/png"
+                tools:srcCompat="@drawable/png" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/set_texture" />
+
+            <ImageView
+                android:id="@+id/reset"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:contentDescription="@string/reset"
+                android:focusable="true"
+                android:onClick="@{() -> viewModel.resetCurrentFeature()}"
+                app:srcCompat="@drawable/reset"
+                tools:srcCompat="@drawable/reset" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/reset" />
+
+            <ImageView
+                android:id="@+id/make_photo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/make_photo"
+                android:clickable="true"
+                android:onClick="@{() -> viewModel.takePhoto()}"
+                app:srcCompat="@drawable/photo"
+                tools:srcCompat="@drawable/photo"
+                android:focusable="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:lines="2"
+                android:text="@string/make_photo" />
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/feature_body"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="20dp"
+            android:weightSum="2"
+            app:layout_constraintBottom_toTopOf="@+id/features_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/makeup"
+                style="?android:attr/button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:onClick="@{() -> viewModel.activateFeaturesType(ApiType.MAKEUP)}"
+                android:background="@{viewModel.isMakeup ? @color/activeButtonBG : @color/inactiveButtonBG}"
+                android:textColor="@{viewModel.isMakeup ? @color/activeButtonText : @color/inactiveButtonText}"
+                android:text="@string/makeup" />
+
+            <Button
+                android:id="@+id/face_beauty"
+                style="?android:attr/button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:onClick="@{() -> viewModel.activateFeaturesType(ApiType.FACE_BEAUTY)}"
+                android:background="@{viewModel.isFaceBeauty ? @color/activeButtonBG : @color/inactiveButtonBG}"
+                android:textColor="@{viewModel.isFaceBeauty ? @color/activeButtonText : @color/inactiveButtonText}"
+                android:text="@string/face_beauty" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/features_list"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="@+id/surfaceView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

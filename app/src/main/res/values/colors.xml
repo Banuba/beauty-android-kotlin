@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="spinnerPopupBackgroundColor">#CC000000</color>
+
+    <color name="textColor">#FFFFFF</color>
+    <color name="selectedTextColor">#D81B60</color>
+    <color name="activeButtonText">@color/selectedTextColor</color>
+    <color name="activeButtonBG">#AAFFFFFF</color>
+
+    <color name="inactiveButtonText">#AAFFFFFF</color>
+    <color name="inactiveButtonBG">#4D000000</color>
+    <color name="inactiveImageBG">#999B9B9B</color>
+</resources>

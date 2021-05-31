@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/camera_fragment">
+
+    <fragment
+        android:id="@+id/camera_fragment"
+        android:name="com.banuba.sdk.example.beautification.camera.CameraFragment"
+        android:label="@string/camera_fragment"
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_camera_fragment_to_photo_fragment"
+            app:destination="@id/photo_fragment" />
+        <action
+            android:id="@+id/action_camera_fragment_to_gallery_fragment"
+            app:destination="@id/gallery_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/photo_fragment"
+        android:name="com.banuba.sdk.example.beautification.camera.PhotoFragment"
+        android:label="@string/photo_fragment"
+        tools:layout="@layout/fragment_photo">
+        <argument
+            android:name="imageBitmap"
+            app:argType="android.graphics.Bitmap" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/gallery_fragment"
+        android:name="com.banuba.sdk.example.beautification.gallery.GalleryFragment"
+        android:label="@string/gallery_fragment"
+        tools:layout="@layout/fragment_gallery">
+    </fragment>
+</navigation>
