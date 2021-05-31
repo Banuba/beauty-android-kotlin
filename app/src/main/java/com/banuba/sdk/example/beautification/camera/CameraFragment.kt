@@ -98,6 +98,7 @@ class CameraFragment : Fragment() {
         viewModel.textureApplied.observe(viewLifecycleOwner, {
             if (it) {
                 findNavController().currentBackStackEntry?.savedStateHandle?.set(TEXTURE_PATH, "")
+                viewModel.setTextureDone()
             }
         })
 

@@ -5,14 +5,13 @@ import android.graphics.Bitmap
 import android.util.Log
 import android.view.SurfaceView
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.*
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.banuba.sdk.camera.Facing
+import com.banuba.sdk.effect_player.FrameDurationListener
 import com.banuba.sdk.entity.RecordedVideoInfo
-import com.banuba.sdk.example.beautification.camera.Feature.ColorFeature
-import com.banuba.sdk.example.beautification.camera.Feature.LinearFeature
-import com.banuba.sdk.example.beautification.camera.Feature.SimpleFeature
+import com.banuba.sdk.example.beautification.camera.Feature.*
 import com.banuba.sdk.manager.BanubaSdkManager
 import com.banuba.sdk.manager.IEventCallback
 import com.banuba.sdk.types.Data
@@ -20,6 +19,10 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class CameraViewModel(application: Application) : AndroidViewModel(application) {
+
+    companion object {
+        private const val UPDATE_DURATION_FREQUENCY = 15
+    }
 
     private val faceBeautyFeatures = arrayListOf(
         LinearFeature("Teeth whitening", "TeethWhitening.strength", "TeethWhitening.strength", "0.0"),
@@ -99,6 +102,25 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
     val textureApplied: LiveData<Boolean>
         get() = _textureApplied
 
+    private var recognizerCounter = 0
+    private var cameraCounter = 0
+    private var rendererCounter = 0
+    private val recognizerStringBuilder = StringBuilder()
+    private val cameraStringBuilder = StringBuilder()
+    private val rendererStringBuilder = StringBuilder()
+
+    private val _recognizerValue = MutableLiveData<String>()
+    val recognizerValue: LiveData<String>
+        get() = _recognizerValue
+
+    private val _cameraValue = MutableLiveData<String>()
+    val cameraValue: LiveData<String>
+        get() = _cameraValue
+
+    private val _rendererValue = MutableLiveData<String>()
+    val rendererValue: LiveData<String>
+        get() = _rendererValue
+
     fun attachSurface(surfaceView: SurfaceView) {
         sdkManager.attachSurface(surfaceView)
         effect = sdkManager.loadEffect(BanubaSdkManager.getResourcesBase() + "/effects/Makeup", false)
@@ -123,6 +145,35 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
             override fun onImageProcessed(p0: Bitmap) {}
 
             override fun onFrameRendered(p0: Data, p1: Int, p2: Int) {}
+        })
+
+        val frameDurationChanger: (Int, Float, StringBuilder, String, MutableLiveData<String>) -> Int =
+            { counter, averaged, builder, caption, liveData ->
+                if (counter < UPDATE_DURATION_FREQUENCY) {
+                    counter + 1
+                } else {
+                    viewModelScope.launch {
+                        val fps = 1F / averaged
+                        builder.setLength(0)
+                        builder.append(caption).append(": ").append(fps)
+                        liveData.value = builder.toString()
+                    }
+                    0
+                }
+            }
+
+        sdkManager.effectPlayer?.addFrameDurationListener(object : FrameDurationListener {
+            override fun onRecognizerFrameDurationChanged(instant: Float, averaged: Float) {
+                recognizerCounter = frameDurationChanger(recognizerCounter, averaged, recognizerStringBuilder, "FRX", _recognizerValue)
+            }
+
+            override fun onCameraFrameDurationChanged(instant: Float, averaged: Float) {
+                cameraCounter = frameDurationChanger(cameraCounter, averaged, cameraStringBuilder, "Camera", _cameraValue)
+            }
+
+            override fun onRenderFrameDurationChanged(instant: Float, averaged: Float) {
+                rendererCounter = frameDurationChanger(rendererCounter, averaged, rendererStringBuilder, "Draw", _rendererValue)
+            }
         })
     }
 
@@ -206,7 +257,12 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
     fun setTexture(path: String) {
         textureFeature.parameter = path
         _currentFeature.value = textureFeature
+        _textureApplied.value = true
         callJsMethod(textureFeature)
+    }
+
+    fun setTextureDone() {
+        _textureApplied.value = false
     }
 
     fun activateFeaturesType(type: ApiType) {

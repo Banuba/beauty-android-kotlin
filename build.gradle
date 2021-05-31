@@ -2,7 +2,7 @@
 buildscript {
     ext {
         kotlin_version = '1.4.31'
-        gradle_version = '4.2.1'
+        gradle_version = '4.1.3'
 
         navigationVersion = '2.3.5'
         dataBindingCompilerVersion = gradle_version
