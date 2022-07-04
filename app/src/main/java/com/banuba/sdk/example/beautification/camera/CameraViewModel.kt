@@ -30,7 +30,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         LinearFeature("Face morphing", "FaceMorph.face", "FaceMorph.clear"),
         LinearFeature("Nose morphing", "FaceMorph.nose", "FaceMorph.clear"),
         LinearFeature("Skin softening", "Skin.softening", "Skin.softening", "0.0"),
-        ColorFeature("Skin coloring", "Skin.color", "Skin.clear"),//
+        ColorFeature("Skin coloring", "Skin.color", "Skin.clear"),
         ColorFeature("Hair coloring", "Hair.color", "Hair.clear"),
         ColorFeature("Eyes coloring", "Eyes.color", "Eyes.clear"),
         LinearFeature("Eye flare", "Eyes.flare", "Eyes.flare", "0.0"),
@@ -40,7 +40,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
     private val makeupFeatures = arrayListOf(
         ColorFeature("Highlighting", "Makeup.highlighter", "Makeup.clear"),
         ColorFeature("Contouring", "Makeup.contour", "Makeup.clear"),
-        ColorFeature("Foundation", "Skin.color", "Makeup.clear"), //
+        ColorFeature("Foundation", "Skin.color", "Makeup.clear"),
         LinearFeature("Skin smoothing", "Skin.softening", "Makeup.clear"),
         ColorFeature("Blush", "Makeup.blushes", "Makeup.clear"),
         LinearFeature("Softlight", "Softlight.strength", "Softlight.clear"),
