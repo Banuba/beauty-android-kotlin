@@ -294,13 +294,12 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun makeJsScript(method: String, params: String?): String {
+    private fun makeEvalJsCode(method: String, params: String?): String {
         return method + if (params == null) "()" else "($params)"
     }
 
     private fun evalJs(method: String, parameter: String) {
-        val script = makeJsScript(method, parameter)
-        Log.i("[===js]", "method: $method\t parameter : $parameter\t script : $script")
+        val script = makeEvalJsCode(method, parameter)
         effect?.evalJs(script, null)
     }
 
