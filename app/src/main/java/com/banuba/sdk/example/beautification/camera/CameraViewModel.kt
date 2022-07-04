@@ -5,8 +5,8 @@ import android.graphics.Bitmap
 import android.util.Log
 import android.view.SurfaceView
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.banuba.sdk.camera.Facing
 import com.banuba.sdk.effect_player.FrameDurationListener
@@ -25,28 +25,28 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private val faceBeautyFeatures = arrayListOf(
-        LinearFeature("Teeth whitening", "TeethWhitening.strength", "TeethWhitening.strength", "0.0"),
+        LinearFeature("Teeth whitening", "Teeth.whitening", "Teeth.whitening", "0.0"),
         LinearFeature("Eyes morphing", "FaceMorph.eyes", "FaceMorph.clear"),
         LinearFeature("Face morphing", "FaceMorph.face", "FaceMorph.clear"),
         LinearFeature("Nose morphing", "FaceMorph.nose", "FaceMorph.clear"),
-        LinearFeature("Skin softening", "SkinSoftening.strength", "SkinSoftening.strength", "0.0"),
+        LinearFeature("Skin softening", "Skin.softening", "Skin.softening", "0.0"),
         ColorFeature("Skin coloring", "Skin.color", "Skin.clear"),
         ColorFeature("Hair coloring", "Hair.color", "Hair.clear"),
         ColorFeature("Eyes coloring", "Eyes.color", "Eyes.clear"),
-        LinearFeature("Eye flare", "EyesFlare.strength", "EyesFlare.strength", "0.0"),
-        LinearFeature("Eyes whitening", "EyesWhitening.strength", "EyesWhitening.strength", "0.0")
+        LinearFeature("Eye flare", "Eyes.flare", "Eyes.flare", "0.0"),
+        LinearFeature("Eyes whitening", "Eyes.whitening", "Eyes.whitening", "0.0")
     )
 
     private val makeupFeatures = arrayListOf(
-        ColorFeature("Highlighting", "Highlighter.color", "Highlighter.clear"),
-        ColorFeature("Contouring", "Contour.color", "Contour.clear"),
-        ColorFeature("Foundation", "Foundation.color", "Foundation.clear"),
-        LinearFeature("Skin smoothing", "Foundation.strength", "Foundation.clear"),
-        ColorFeature("Blush", "Blush.color", "Blush.clear"),
-        LinearFeature("Softlight", "Softlight.strength", "Softlight.strength", "0.0"),
-        ColorFeature("Eyeliner", "Eyeliner.color", "Eyeliner.clear"),
-        ColorFeature("Eyeshadow", "Eyeshadow.color", "Eyeshadow.clear"),
-        ColorFeature("Eyelashes", "Eyelashes.color", "Eyelashes.clear"),
+        ColorFeature("Highlighting", "Makeup.highlighter", "Makeup.clear"),
+        ColorFeature("Contouring", "Makeup.contour", "Makeup.clear"),
+        ColorFeature("Foundation", "Skin.color", "Makeup.clear"),
+        LinearFeature("Skin smoothing", "Skin.softening", "Makeup.clear"),
+        ColorFeature("Blush", "Makeup.blushes", "Makeup.clear"),
+        LinearFeature("Softlight", "Softlight.strength", "Softlight.clear"),
+        ColorFeature("Eyeliner", "Makeup.eyeliner", "Makeup.clear"),
+        ColorFeature("Eyeshadow", "Makeup.eyeshadow", "Makeup.clear"),
+        ColorFeature("Eyelashes", "Makeup.lashes", "Makeup.clear"),
         ColorFeature("Matt lipstick", "Lips.matt", "Lips.clear"),
         ColorFeature("Shiny lipstick", "Lips.shiny", "Lips.clear"),
         ColorFeature("Glitter lipstick", "Lips.glitter", "Lips.clear")
@@ -221,17 +221,17 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
 
     fun onLinearFeatureChange(feature: LinearFeature, progress: Float) {
         feature.value = progress
-        callJsMethod(feature)
+        evalJs(feature)
     }
 
     fun onColorFeatureChange(feature: ColorFeature, color: Int, alphaPosition: Int) {
         feature.color = color
         feature.alphaPosition = alphaPosition
-        callJsMethod(feature)
+        evalJs(feature)
     }
 
     fun restoreFeatures() {
-        allFeatures.filter { !it.isDefault() }.forEach { callJsMethod(it) }
+        allFeatures.filter { !it.isDefault() }.forEach { evalJs(it) }
     }
 
     fun resetCurrentFeature() {
@@ -258,7 +258,7 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         textureFeature.parameter = path
         _currentFeature.value = textureFeature
         _textureApplied.value = true
-        callJsMethod(textureFeature)
+        evalJs(textureFeature)
     }
 
     fun setTextureDone() {
@@ -286,18 +286,21 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun callJsMethod(feature: Feature) {
+    private fun evalJs(feature: Feature) {
         when (feature) {
-            is SimpleFeature -> callJsMethod(feature.method, feature.parameter)
-            is LinearFeature -> callJsMethod(feature.method, feature.value.toString())
-            is ColorFeature -> callJsMethod(feature.method, getColor(feature.color))
+            is SimpleFeature -> evalJs(feature.method, feature.parameter)
+            is LinearFeature -> evalJs(feature.method, feature.value.toString())
+            is ColorFeature -> evalJs(feature.method, getColor(feature.color))
         }
     }
 
-    private fun callJsMethod(method: String, parameter: String) {
-        effect?.callJsMethod(method, parameter)
+    private fun makeEvalJsCode(method: String, params: String?): String {
+        return method + if (params == null) "()" else "($params)"
+    }
 
-        Log.i("[===js]", "method: $method\t parameter: $parameter")
+    private fun evalJs(method: String, parameter: String) {
+        val script = makeEvalJsCode(method, parameter)
+        effect?.evalJs(script, null)
     }
 
     private fun getColor(color: Int): String {
@@ -307,14 +310,14 @@ class CameraViewModel(application: Application) : AndroidViewModel(application) 
         val b: Int = color and 0x000000FF
 
         val colorArr = listOf(r, g, b, a).map { it.toFloat() / 0xFF }.toFloatArray()
-
-        return colorArr.joinToString(" ") { v: Float ->
+        val colorString = colorArr.joinToString(" ") { v: Float ->
             ((100.0 * v).roundToInt().toFloat() / 100).toString()
         }
+        return "'$colorString'"
     }
 
     private fun resetFeature(feature: Feature) {
         feature.reset()
-        callJsMethod(feature.clearMethod, feature.clearValue)
+        evalJs(feature.clearMethod, feature.clearValue)
     }
 }
