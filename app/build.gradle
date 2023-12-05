@@ -19,13 +19,12 @@ android {
             storePassword 'demokey'
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.banuba.sdk.example.beautification"
         minSdkVersion 23
-        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -80,8 +79,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    // Banuba SDK dependencies
-    implementation fileTree(dir: '../libs', include: ['*.aar'])
+
+    implementation "com.banuba.sdk:banuba_sdk:1.9.1"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"

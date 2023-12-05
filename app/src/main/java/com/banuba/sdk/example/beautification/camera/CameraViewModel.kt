@@ -2,7 +2,6 @@ package com.banuba.sdk.example.beautification.camera
 
 import android.app.Application
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.SurfaceView
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
