@@ -80,7 +80,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
 
-    implementation "com.banuba.sdk:banuba_sdk:1.9.1"
+    implementation "com.banuba.sdk:banuba_sdk:1.17.6"
 
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
